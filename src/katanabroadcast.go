@@ -8,6 +8,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -15,7 +16,7 @@ func sendFile(file []byte, params map[string]string, filename, uri string) error
 	client := &http.Client{}
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("challfile", filename)
+	part, err := writer.CreateFormFile(os.Getenv("CHALLENGE_ARTIFACT"), filename)
 	if err != nil {
 		return err
 	}
@@ -39,7 +40,6 @@ func sendFile(file []byte, params map[string]string, filename, uri string) error
 
 func upload(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(2 << 30)
-
 	var fileName string
 	for k := range r.MultipartForm.File {
 		fileName = k
