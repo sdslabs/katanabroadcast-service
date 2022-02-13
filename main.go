@@ -65,12 +65,12 @@ func (s *server) UploadFile(stream pb.FileUploadService_UploadFileServer) error 
 		return err
 	}
 	for _, address := range addresses {
-		go SendFile(fileData, fileName, address)
+		go SendFile(fileData, fileName, chalName, address)
 	}
 	return nil
 }
 
-func SendFile(fileData bytes.Buffer, filename, uri string) error {
+func SendFile(fileData bytes.Buffer, filename, chalName, uri string) error {
 	conn, err := grpc.Dial(uri, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalln("Error connecting to teamvm ", err)
@@ -90,7 +90,7 @@ func SendFile(fileData bytes.Buffer, filename, uri string) error {
 		Data: &pb.UploadFileRequest_FileInfo{
 			FileInfo: &pb.FileInfo{
 				FileName: filename,
-				ChalName: filename,
+				ChalName: chalName,
 			},
 		},
 	}
@@ -129,6 +129,8 @@ func SendFile(fileData bytes.Buffer, filename, uri string) error {
 	gotFileSize := res.GetSize()
 	if gotFileSize != uint64(fileSize) {
 		log.Printf("Error sending file some bits maybe lost expected %d bytes, got %d bytes", fileSize, gotFileSize)
+	} else {
+		log.Println("File sent successfully")
 	}
 	return nil
 }
