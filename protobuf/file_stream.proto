@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = "/proto";
+package filestreamservice;
+service FileUploadService{
+    rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse) {};
+}
+
+
+message UploadFileRequest{
+    oneof data{
+        PodAddresses addresses = 1;
+        FileInfo file_info = 2;
+        bytes chunk_data = 3;
+    }
+}
+
+message FileInfo{
+    string file_name = 1;
+    string chal_name = 2;
+}
+
+message PodAddresses{
+    repeated string address = 1;
+}
+
+message UploadFileResponse{
+    uint64 size = 1;
+}
