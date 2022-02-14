@@ -1,9 +1,9 @@
 FROM golang:1.17 as builder
-WORKDIR /opt/katanad/
+WORKDIR /opt/katanabroadcast/
 COPY . .
-RUN go build -o ./katanad
+RUN go build -o ./katanabroadcast
 
 FROM ubuntu:latest
-WORKDIR /opt/katanad/
-COPY --from=builder /opt/katanad/katanad ./
-CMD ["./katanad"]
+WORKDIR /opt/katanabroadcast/
+COPY --from=builder /opt/katanabroadcast/katanabroadcast ./
+CMD ["./katanabroadcast"]
